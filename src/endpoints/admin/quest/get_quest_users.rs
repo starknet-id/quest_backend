@@ -1,6 +1,6 @@
 use crate::middleware::auth::auth_middleware;
+use crate::utils::to_hex;
 use crate::utils::verify_quest_auth;
-use crate::utils::to_hex;  
 use crate::{
     models::{AppState, CompletedTaskDocument, QuestDocument, QuestTaskDocument},
     utils::get_error,
@@ -47,10 +47,8 @@ pub async fn get_quest_users_handler(
         Err(e) => return get_error(format!("Error fetching tasks: {}", e)),
     };
 
-    let task_ids_result: Result<Vec<u32>, _> = task_cursor
-        .map_ok(|doc| doc.id as u32)
-        .try_collect()
-        .await;
+    let task_ids_result: Result<Vec<u32>, _> =
+        task_cursor.map_ok(|doc| doc.id as u32).try_collect().await;
 
     let task_ids = match task_ids_result {
         Ok(ids) => ids,
